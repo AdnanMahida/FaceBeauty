@@ -49,6 +49,7 @@ LinearLayout imageView = (LinearLayout) findViewById(R.id.image);
         imageView.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View view, MotionEvent motionEvent) {
+                
                 bar.setVisibility(View.VISIBLE);
                 bar.startAnimation(animation);
                 return false;
