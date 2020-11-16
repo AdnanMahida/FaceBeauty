@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorWhite"
+    tools:context=".Activities.ImagePreviewActivity">
+
+    <com.ad.zoomimageview.ZoomImageView
+        android:id="@+id/preview_imageview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/preview_camera_options"
+        android:src="@drawable/ic_add_circle" />
+
+    <RelativeLayout
+        android:id="@+id/preview_camera_options"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        android:layout_alignParentBottom="true"
+        android:background="@color/colorPrimary"
+        android:padding="10dp">
+
+        <ImageView
+            android:onClick="onClose"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentStart="true"
+            android:layout_centerInParent="true"
+            android:layout_marginStart="50dp"
+            android:src="@drawable/ic_incorrect" />
+
+        <ImageView
+            android:onClick="onCorrect"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:layout_marginEnd="50dp"
+            android:src="@drawable/ic_correct" />
+    </RelativeLayout>
+</RelativeLayout>

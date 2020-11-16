@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/design_include"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center_horizontal|center_vertical"
+    android:background="@color/colorPrimary"
+    android:orientation="vertical">
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center">
+
+            <LinearLayout
+                android:id="@+id/menu_lips_beauty"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?selectableItemBackground"
+                android:onClick="onMenuClick"
+                android:orientation="vertical"
+                android:padding="10dp"
+                tools:targetApi="m">
+
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_lips_outer" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/lips_beauty"
+                    android:textColor="@color/colorAccent" />
+
+            </LinearLayout>
+
+            <!--            <LinearLayout-->
+            <!--                android:id="@+id/menu_face_beauty"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_gravity="center"-->
+            <!--                android:clickable="true"-->
+            <!--                android:onClick="onMenuClick"-->
+            <!--                android:focusable="true"-->
+            <!--                android:foreground="?selectableItemBackground"-->
+            <!--                android:orientation="vertical"-->
+            <!--                android:padding="10dp"-->
+            <!--                tools:targetApi="m">-->
+
+            <!--                <ImageView-->
+            <!--                    android:layout_width="30dp"-->
+            <!--                    android:layout_height="30dp"-->
+            <!--                    android:layout_gravity="center"-->
+            <!--                    android:src="@drawable/ic_face" />-->
+
+            <!--                <TextView-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:text="@string/face_beauty"-->
+            <!--                    android:textColor="@color/colorAccent" />-->
+
+            <!--            </LinearLayout>-->
+
+            <!--            <LinearLayout-->
+            <!--                android:id="@+id/menu_eye_beauty"-->
+            <!--                android:layout_width="wrap_content"-->
+            <!--                android:layout_height="wrap_content"-->
+            <!--                android:layout_gravity="center"-->
+            <!--                android:clickable="true"-->
+            <!--                android:onClick="onMenuClick"-->
+            <!--                android:focusable="true"-->
+            <!--                android:foreground="?selectableItemBackground"-->
+            <!--                android:orientation="vertical"-->
+            <!--                android:padding="10dp"-->
+            <!--                tools:targetApi="m">-->
+
+            <!--                <ImageView-->
+            <!--                    android:layout_width="30dp"-->
+            <!--                    android:layout_height="30dp"-->
+            <!--                    android:layout_gravity="center"-->
+            <!--                    android:src="@drawable/ic_eye" />-->
+
+            <!--                <TextView-->
+            <!--                    android:layout_width="wrap_content"-->
+            <!--                    android:layout_height="wrap_content"-->
+            <!--                    android:text="@string/eye_beauty"-->
+            <!--                    android:textColor="@color/colorAccent" />-->
+
+            <!--            </LinearLayout>-->
+        </LinearLayout>
+    </HorizontalScrollView>
+</LinearLayout>

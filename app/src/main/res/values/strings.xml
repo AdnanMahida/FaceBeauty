@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Face Beauty</string>
+    <string name="todo">TODO</string>
+    <string name="lips_beauty">Lips Beauty</string>
+    <string name="save">Save</string>
+    <string name="select_lips_color">Select Lips Color</string>
+    <string name="select_alpha">Select Alpha</string>
+    <string name="open_new_image">Open new image</string>
+    <string name="share">Share</string>
+    <string name="undo">Undo</string>
+    <string name="redo">Redo</string>
+    <string name="camera">Open Camera</string>
+    <string name="settings">Setting</string>
+    <string name="help_feedback"><![CDATA[Help & Feedback]]></string>
+</resources>

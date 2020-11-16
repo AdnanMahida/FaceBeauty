@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/designmenu_newimage"
+        android:icon="@drawable/ic_gallery1"
+        android:title="@string/open_new_image" />
+    <item
+        android:id="@+id/designmenu_camera"
+        android:icon="@drawable/ic_camera"
+        android:title="@string/camera" />
+    <item
+        android:id="@+id/designmenu_save"
+        android:icon="@drawable/ic_save"
+        android:title="@string/save" />
+    <item
+        android:id="@+id/designmenu_share"
+        android:icon="@drawable/ic_share"
+        android:title="@string/share" />
+    <item
+        android:id="@+id/designmenu_undo"
+        android:icon="@drawable/ic_undo"
+        android:title="@string/undo"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/designmenu_redo"
+        android:icon="@drawable/ic_redo"
+        android:title="@string/redo"
+        app:showAsAction="ifRoom" />
+
+<!--    <item-->
+<!--        android:id="@+id/designmenu_settings"-->
+<!--        android:title="@string/settings" />-->
+<!--    <item-->
+<!--        android:id="@+id/designmenu_helpfeedback"-->
+<!--        android:title="@string/help_feedback"-->
+<!--        app:showAsAction="withText" />-->
+</menu>
