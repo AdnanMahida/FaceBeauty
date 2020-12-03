@@ -9,7 +9,7 @@ The main contents include:
 - Share Images 
 
 makeups
-![](face_beauty_work.gif)
+![](face_beauty_work.GIF)
 
 
 For more demonstration, please directly view the principle article below, or download directly Demo [APP Release V1.0.0 version](FaceBeauty.apk)
