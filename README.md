@@ -1,1 +1,1 @@
-# FaceBeauty
+# Face Beauty (lipstick and FaceMask)
