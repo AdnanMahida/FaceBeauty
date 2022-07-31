@@ -1,4 +1,4 @@
-package com.ad.facebeauty.Adapter;
+package com.ad.facebeauty.adapter;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.ad.facebeauty.R;
-import com.ad.facebeauty.Utills.ToolType;
+import com.ad.facebeauty.utills.ToolType;
 
 import java.util.ArrayList;
 import java.util.List;

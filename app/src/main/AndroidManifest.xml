@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ad.facebeauty">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="false" />
+
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
     <uses-permission android:name="android.permission.CAMERA" />
-
-<!--    <protected-broadcast android:name="android.intent.action.MEDIA_MOUNTED" />-->
 
     <application
         android:allowBackup="true"
@@ -15,30 +19,20 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name=".Activities.ImagePreviewActivity"
+            android:name=".activities.ImagePreviewActivity"
             android:theme="@style/Theme.AppCompat.NoActionBar" />
-        <activity android:name=".Activities.HelpFeedBackActivity" />
-        <activity android:name=".Activities.SettingsActivity" />
-        <activity android:name=".Activities.DesignActivity">
-
-            <!-- <meta-data -->
-            <!-- android:name="android.support.PARENT_ACTIVITY" -->
-            <!-- android:value=".Activities.SettingsActivity" /> -->
-            <!-- <meta-data -->
-            <!-- android:name="android.support.PARENT_ACTIVITY" -->
-            <!-- android:value=".Activities.HelpFeedBackActivity" /> -->
-
-        </activity>
+        <activity android:name=".activities.HelpFeedBackActivity" />
+        <activity android:name=".activities.SettingsActivity" />
+        <activity android:name=".activities.DesignActivity" />
         <activity
-            android:name=".Activities.MainActivity"
+            android:name=".activities.MainActivity"
+            android:exported="true"
             android:theme="@style/Theme.AppCompat.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
     </application>
-
 </manifest>

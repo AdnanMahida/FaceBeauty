@@ -1,4 +1,4 @@
-package com.ad.facebeauty.Utills;
+package com.ad.facebeauty.utills;
 
 import android.content.Context;
 import android.content.Intent;

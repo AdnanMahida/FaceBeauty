@@ -1,4 +1,4 @@
-package com.ad.facebeauty.Activities;
+package com.ad.facebeauty.activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;

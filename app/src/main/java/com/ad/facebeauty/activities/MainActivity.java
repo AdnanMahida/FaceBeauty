@@ -1,14 +1,12 @@
-package com.ad.facebeauty.Activities;
+package com.ad.facebeauty.activities;
 
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,7 +18,7 @@ import androidx.camera.core.ImageAnalysis;
 import androidx.camera.core.ImageCapture;
 import androidx.camera.core.ImageCaptureException;
 import androidx.camera.core.Preview;
-import androidx.camera.extensions.HdrImageCaptureExtender;
+//import androidx.camera.extensions.HdrImageCaptureExtender;
 import androidx.camera.lifecycle.ProcessCameraProvider;
 import androidx.camera.view.PreviewView;
 import androidx.cardview.widget.CardView;
@@ -29,8 +27,8 @@ import androidx.core.content.ContextCompat;
 import androidx.lifecycle.LifecycleOwner;
 
 import com.ad.facebeauty.R;
-import com.ad.facebeauty.Utills.PermissionUtils;
-import com.ad.facebeauty.Utills.SaveImageFile;
+import com.ad.facebeauty.utills.PermissionUtils;
+import com.ad.facebeauty.utills.SaveImageFile;
 import com.google.android.material.snackbar.Snackbar;
 import com.google.common.util.concurrent.ListenableFuture;
 
@@ -130,49 +128,46 @@ public class MainActivity extends AppCompatActivity{
         ImageCapture.Builder builder = new ImageCapture.Builder();
 
         //Vendor-Extensions (The CameraX extensions dependency in build.gradle)
-        HdrImageCaptureExtender hdrImageCaptureExtender = HdrImageCaptureExtender.create(builder);
+//        HdrImageCaptureExtender hdrImageCaptureExtender = HdrImageCaptureExtender.create(builder);
 
         // Query if extension is available (optional).
-        if (hdrImageCaptureExtender.isExtensionAvailable(cameraSelector)) {
+//        if (hdrImageCaptureExtender.isExtensionAvailable(cameraSelector)) {
             // Enable the extension if available.
-            hdrImageCaptureExtender.enableExtension(cameraSelector);
-        }
+//            hdrImageCaptureExtender.enableExtension(cameraSelector);
+//        }
 
         final ImageCapture imageCapture = builder
                 .setTargetRotation(this.getWindowManager().getDefaultDisplay().getRotation())
                 .build();
-        preview.setSurfaceProvider(cameraPreviewView.createSurfaceProvider());
-        camera = cameraProvider.bindToLifecycle((LifecycleOwner) this, cameraSelector, preview, imageAnalysis, imageCapture);
+        preview.setSurfaceProvider(cameraPreviewView.getSurfaceProvider());
+        camera = cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageAnalysis, imageCapture);
 
 
-        captureBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                SaveImageFile imageFile = new SaveImageFile(MainActivity.this);
+        captureBtn.setOnClickListener(v -> {
+            SaveImageFile imageFile = new SaveImageFile(MainActivity.this);
 
-                SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US);
-                File file = new File(imageFile.getBatchDirectoryName(), imageFile.getAppName() + mDateFormat.format(new Date()) + ".jpg");
+            SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyyMMddHHmmss", Locale.US);
+            File file = new File(imageFile.getBatchDirectoryName(), imageFile.getAppName() + mDateFormat.format(new Date()) + ".jpg");
 
-                ImageCapture.OutputFileOptions outputFileOptions = new ImageCapture.OutputFileOptions.Builder(file).build();
-                imageCapture.takePicture(outputFileOptions, executor, new ImageCapture.OnImageSavedCallback() {
-                    @Override
-                    public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                Intent intent = new Intent(MainActivity.this, ImagePreviewActivity.class);
-                                intent.putExtra("imageUrl", file.getPath());
-                                startActivity(intent);
-                            }
-                        });
-                    }
+            ImageCapture.OutputFileOptions outputFileOptions = new ImageCapture.OutputFileOptions.Builder(file).build();
+            imageCapture.takePicture(outputFileOptions, executor, new ImageCapture.OnImageSavedCallback() {
+                @Override
+                public void onImageSaved(@NonNull ImageCapture.OutputFileResults outputFileResults) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Intent intent = new Intent(MainActivity.this, ImagePreviewActivity.class);
+                            intent.putExtra("imageUrl", file.getPath());
+                            startActivity(intent);
+                        }
+                    });
+                }
 
-                    @Override
-                    public void onError(@NonNull ImageCaptureException error) {
-                        error.printStackTrace();
-                    }
-                });
-            }
+                @Override
+                public void onError(@NonNull ImageCaptureException error) {
+                    error.printStackTrace();
+                }
+            });
         });
     }
 
@@ -209,6 +204,7 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         if (requestCode == PermissionUtils.PERMISSION_REQUEST_CODE) {
             if (allPermissionsGranted()) {
                 startCamera();

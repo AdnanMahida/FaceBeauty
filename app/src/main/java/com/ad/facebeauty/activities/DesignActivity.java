@@ -1,4 +1,4 @@
-package com.ad.facebeauty.Activities;
+package com.ad.facebeauty.activities;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
@@ -27,13 +27,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ad.facebeauty.Adapter.MainToolAdapter;
 import com.ad.facebeauty.R;
-import com.ad.facebeauty.Utills.ColorPickerSeekbar;
-import com.ad.facebeauty.Utills.FaceGlow;
-import com.ad.facebeauty.Utills.LipDraw;
-import com.ad.facebeauty.Utills.SaveImageFile;
-import com.ad.facebeauty.Utills.ToolType;
+import com.ad.facebeauty.adapter.MainToolAdapter;
+import com.ad.facebeauty.utills.ColorPickerSeekbar;
+import com.ad.facebeauty.utills.FaceGlow;
+import com.ad.facebeauty.utills.LipDraw;
+import com.ad.facebeauty.utills.SaveImageFile;
+import com.ad.facebeauty.utills.ToolType;
 import com.ad.zoomimageview.ZoomImageView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -57,7 +57,7 @@ public class DesignActivity extends AppCompatActivity implements MainToolAdapter
     private static int tempColor = Color.RED, tempAlpha = 80, tempColorProcess = 0;
     private Uri imageUri;
     private Bitmap newTempBitmap;
-    private List<Bitmap> bitmapList = new ArrayList<>();
+    private final List<Bitmap> bitmapList = new ArrayList<>();
     private InputImage inputImage;
     private ZoomImageView mainImageView;
     private FloatingActionButton btnFaceDetect;
@@ -316,6 +316,7 @@ public class DesignActivity extends AppCompatActivity implements MainToolAdapter
 
     @Override
     public void onBackPressed() {
+        super.onBackPressed();
         AlertDialog.Builder builder = new AlertDialog.Builder(DesignActivity.this);
         builder.setTitle("Confirmation").setMessage("Are you sure you want to exit without saving image")
                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -356,10 +357,10 @@ public class DesignActivity extends AppCompatActivity implements MainToolAdapter
             txtColor.setVisibility(View.GONE);
             tempColor = Color.WHITE;
             alphaSeekBar.setProgress(15);
-            tempAlpha =15;
-        }else if (toolType == ToolType.LIPS_BEAUTY){
+            tempAlpha = 15;
+        } else if (toolType == ToolType.LIPS_BEAUTY) {
             alphaSeekBar.setProgress(80);
-            tempAlpha =80;
+            tempAlpha = 80;
         }
         colorPickerSeekbar.init();
         txtColor.setText("Selected Color");
@@ -403,30 +404,19 @@ public class DesignActivity extends AppCompatActivity implements MainToolAdapter
             }
         });
 
-        Objects.requireNonNull(inCorrectBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
+        Objects.requireNonNull(inCorrectBtn).setOnClickListener(v -> dialog.dismiss());
+        Objects.requireNonNull(correctBtn).setOnClickListener(v -> {
+            if (toolType == ToolType.LIPS_BEAUTY) {
+                LipDraw draw = new LipDraw();
+                newTempBitmap = draw.drawFace(newTempBitmap, mainFaceList.get(0), tempColor, tempAlpha);
+                bitmapList.add(newTempBitmap);
+            } else if (toolType == ToolType.FACE_GLOW) {
+                FaceGlow glow = new FaceGlow();
+                newTempBitmap = glow.drawFace(newTempBitmap, mainFaceList.get(0), tempColor, tempAlpha);
+                bitmapList.add(newTempBitmap);
             }
-        });
-        Objects.requireNonNull(correctBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (toolType) {
-                    case LIPS_BEAUTY:
-                        LipDraw draw = new LipDraw();
-                        newTempBitmap = draw.drawFace(newTempBitmap, mainFaceList.get(0), tempColor, tempAlpha);
-                        bitmapList.add(newTempBitmap);
-                        break;
-                    case FACE_GLOW:
-                        FaceGlow glow = new FaceGlow();
-                        newTempBitmap = glow.drawFace(newTempBitmap, mainFaceList.get(0), tempColor, tempAlpha);
-                        bitmapList.add(newTempBitmap);
-                        break;
-                }
-                mainImageView.setImageDrawable(new BitmapDrawable(getResources(), newTempBitmap));
-                dialog.dismiss();
-            }
+            mainImageView.setImageDrawable(new BitmapDrawable(getResources(), newTempBitmap));
+            dialog.dismiss();
         });
         dialog.show();
     }
