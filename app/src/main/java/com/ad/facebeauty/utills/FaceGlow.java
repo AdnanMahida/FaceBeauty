@@ -1,4 +1,4 @@
-package com.ad.facebeauty.Utills;
+package com.ad.facebeauty.utills;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapShader;

@@ -1,11 +1,9 @@
-package com.ad.facebeauty.Activities;
+package com.ad.facebeauty.activities;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -21,22 +19,23 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.OnBackPressedCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.ad.facebeauty.Adapter.MainToolAdapter;
 import com.ad.facebeauty.R;
-import com.ad.facebeauty.Utills.ColorPickerSeekbar;
-import com.ad.facebeauty.Utills.FaceGlow;
-import com.ad.facebeauty.Utills.LipDraw;
-import com.ad.facebeauty.Utills.SaveImageFile;
-import com.ad.facebeauty.Utills.ToolType;
+import com.ad.facebeauty.adapter.MainToolAdapter;
+import com.ad.facebeauty.utills.ColorPickerSeekbar;
+import com.ad.facebeauty.utills.FaceGlow;
+import com.ad.facebeauty.utills.ImageUtils;
+import com.ad.facebeauty.utills.LipDraw;
+import com.ad.facebeauty.utills.SaveImageFile;
+import com.ad.facebeauty.utills.ToolType;
 import com.ad.zoomimageview.ZoomImageView;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -47,17 +46,15 @@ import com.google.mlkit.vision.face.FaceDetection;
 import com.google.mlkit.vision.face.FaceDetector;
 import com.google.mlkit.vision.face.FaceDetectorOptions;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 public class DesignActivity extends AppCompatActivity implements MainToolAdapter.OnToolItemSelected {
-    public static final int NEW_IMAGE_REQUEST = 2;
     private static int tempColor = Color.RED, tempAlpha = 80, tempColorProcess = 0;
     private Uri imageUri;
     private Bitmap newTempBitmap;
-    private List<Bitmap> bitmapList = new ArrayList<>();
+    private final List<Bitmap> bitmapList = new ArrayList<>();
     private InputImage inputImage;
     private ZoomImageView mainImageView;
     private FloatingActionButton btnFaceDetect;
@@ -76,14 +73,19 @@ public class DesignActivity extends AppCompatActivity implements MainToolAdapter
         getImageUriFromIntent();
         initScannig();
 
-        btnFaceDetect.setOnClickListener(new View.OnClickListener() {
+        btnFaceDetect.setOnClickListener(v -> {
+            if (inputImage != null) {
+                detectFaces(inputImage);
+                scannerView.setVisibility(View.VISIBLE);
+                scannerView.startAnimation(animation);
+            }
+        });
+
+        // Register back press callback
+        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
             @Override
-            public void onClick(View v) {
-                if (inputImage != null) {
-                    detectFaces(inputImage);
-                    scannerView.setVisibility(View.VISIBLE);
-                    scannerView.startAnimation(animation);
-                }
+            public void handleOnBackPressed() {
+                showExitConfirmationDialog();
             }
         });
     }
@@ -125,15 +127,17 @@ public class DesignActivity extends AppCompatActivity implements MainToolAdapter
     private void getImageUriFromIntent() {
         try {
             Intent intent = getIntent();
-            imageUri = Uri.parse(Objects.requireNonNull(intent.getExtras()).getString("imageUri"));
-            final InputStream stream = getContentResolver().openInputStream(imageUri);
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inMutable = true;
-            Bitmap bitmap = BitmapFactory.decodeStream(stream, null, options);
-            newTempBitmap = bitmap;
-            bitmapList.add(newTempBitmap);
-            mainImageView.setImageBitmap(bitmap);
-            inputImage = InputImage.fromFilePath(DesignActivity.this, imageUri);
+            String uriString = intent.getExtras().getString("imageUri");
+            imageUri = Uri.parse(uriString);
+
+            Bitmap rotatedBitmap = ImageUtils.getCorrectlyOrientedBitmap(this, imageUri);
+
+            if (rotatedBitmap != null) {
+                newTempBitmap = rotatedBitmap;
+                bitmapList.add(newTempBitmap);
+                mainImageView.setImageBitmap(rotatedBitmap);
+                inputImage = InputImage.fromBitmap(rotatedBitmap, 0);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -157,30 +161,23 @@ public class DesignActivity extends AppCompatActivity implements MainToolAdapter
             Task<List<Face>> result =
                     detector.process(image)
                             .addOnSuccessListener(
-                                    new OnSuccessListener<List<Face>>() {
-                                        @Override
-                                        public void onSuccess(List<Face> faces) {
-                                            scannerView.clearAnimation();
-                                            if (!faces.isEmpty()) {
-                                                if (mainFaceList != null) {
-                                                    mainFaceList.clear();
-                                                }
-                                                mainFaceList = faces;
-                                                mainToolView.setVisibility(View.VISIBLE);
-                                                btnFaceDetect.setVisibility(View.GONE);
-                                            } else {
-                                                noFaceAvailableDialog();
+                                    faces -> {
+                                        scannerView.clearAnimation();
+                                        if (!faces.isEmpty()) {
+                                            if (mainFaceList != null) {
+                                                mainFaceList.clear();
                                             }
-                                        }
-                                    })
-                            .addOnFailureListener(
-                                    new OnFailureListener() {
-                                        @Override
-                                        public void onFailure(@NonNull Exception e) {
-                                            scannerView.clearAnimation();
+                                            mainFaceList = faces;
+                                            mainToolView.setVisibility(View.VISIBLE);
+                                            btnFaceDetect.setVisibility(View.GONE);
+                                        } else {
                                             noFaceAvailableDialog();
                                         }
-                                    });
+                                    })
+                            .addOnFailureListener(e -> {
+                                scannerView.clearAnimation();
+                                noFaceAvailableDialog();
+                            });
         } catch (Exception e) {
             e.printStackTrace();
             noFaceAvailableDialog();
@@ -204,37 +201,31 @@ public class DesignActivity extends AppCompatActivity implements MainToolAdapter
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.designmenu_camera: {
-                Intent i = new Intent(DesignActivity.this, MainActivity.class);
-                startActivity(i);
-                finishAffinity();
+            case R.id.designmenu_camera:
+                showDiscardImageConfirmationDialog(() -> {
+                    Intent i = new Intent(DesignActivity.this, MainActivity.class);
+                    startActivity(i);
+                    finishAffinity();
+                });
                 break;
-            }
-            case R.id.designmenu_save: {
+            case R.id.designmenu_save:
                 if (newTempBitmap != null) {
                     SaveImageFile imageFile = new SaveImageFile(DesignActivity.this);
                     imageFile.SaveImage(newTempBitmap, rootLayout);
                 }
                 break;
-            }
-            case R.id.designmenu_newimage: {
-                Intent i = new Intent(Intent.ACTION_GET_CONTENT);
-                i.setType("image/*");
-                startActivityForResult(Intent.createChooser(i, "Select Picture"), NEW_IMAGE_REQUEST);
+            case R.id.designmenu_newimage:
+                showDiscardImageConfirmationDialog(() -> imagePickerLauncher.launch("image/*"));
                 break;
-            }
-            case R.id.designmenu_share: {
+            case R.id.designmenu_share:
                 shareImageUri(imageUri);
                 break;
-            }
-            case R.id.designmenu_undo: {
+            case R.id.designmenu_undo:
                 onUndoPress();
                 break;
-            }
-            case R.id.designmenu_redo: {
+            case R.id.designmenu_redo:
                 onRedoPress();
                 break;
-            }
 
 //            case R.id.designmenu_helpfeedback:
 //                startActivity(new Intent(DesignActivity.this, HelpFeedBackActivity.class));
@@ -281,55 +272,54 @@ public class DesignActivity extends AppCompatActivity implements MainToolAdapter
         startActivity(intent);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == RESULT_OK) {
-            if (requestCode == NEW_IMAGE_REQUEST) {
-                if (data != null) {
+    ActivityResultLauncher<String> imagePickerLauncher = registerForActivityResult(
+            new ActivityResultContracts.GetContent(),
+            uri -> {
+                if (uri != null) {
                     try {
-                        imageUri = data.getData();
-                        final InputStream stream = getContentResolver().openInputStream(imageUri);
-                        BitmapFactory.Options options = new BitmapFactory.Options();
-                        options.inMutable = true;
-                        Bitmap bitmap = BitmapFactory.decodeStream(stream, null, options);
+                        imageUri = uri;
+
+                        Bitmap bitmap = ImageUtils.getCorrectlyOrientedBitmap(this, uri);
+
+                        if (bitmap == null) {
+                            Snackbar.make(rootLayout, "Failed to load image", Snackbar.LENGTH_LONG).show();
+                            return;
+                        }
+
+                        // Clean previous bitmap
                         if (newTempBitmap != null && !newTempBitmap.isRecycled()) {
                             newTempBitmap.recycle();
                             newTempBitmap = null;
                         }
+
                         bitmapList.clear();
                         newTempBitmap = bitmap;
                         bitmapList.add(newTempBitmap);
+
+                        // Update UI
                         btnFaceDetect.setVisibility(View.VISIBLE);
                         mainToolView.setVisibility(View.GONE);
                         mainImageView.setImageBitmap(bitmap);
                         inputImage = InputImage.fromFilePath(DesignActivity.this, imageUri);
+
                     } catch (Exception e) {
                         e.printStackTrace();
+                        Snackbar.make(rootLayout, "Error processing image", Snackbar.LENGTH_LONG).show();
                     }
+                } else {
+                    Snackbar.make(rootLayout, "You haven't picked Image", Snackbar.LENGTH_LONG).setAction("Action", null).show();
                 }
             }
-        } else {
-            Snackbar.make(rootLayout, "You haven't picked Image", Snackbar.LENGTH_LONG).setAction("Action", null).show();
-        }
-    }
+    );
 
-    @Override
-    public void onBackPressed() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(DesignActivity.this);
-        builder.setTitle("Confirmation").setMessage("Are you sure you want to exit without saving image")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        DesignActivity.this.finish();
-                    }
-                });
-        builder.setNegativeButton("Cancel", null).setNeutralButton("Discard", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                DesignActivity.this.finish();
-            }
-        }).create().show();
+
+    private void showExitConfirmationDialog() {
+        new AlertDialog.Builder(this)
+                .setTitle("Confirmation")
+                .setMessage("Are you sure you want to exit without saving the image?")
+                .setPositiveButton("Yes", (dialog, which) -> finish())
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 
 
@@ -356,10 +346,10 @@ public class DesignActivity extends AppCompatActivity implements MainToolAdapter
             txtColor.setVisibility(View.GONE);
             tempColor = Color.WHITE;
             alphaSeekBar.setProgress(15);
-            tempAlpha =15;
-        }else if (toolType == ToolType.LIPS_BEAUTY){
+            tempAlpha = 15;
+        } else if (toolType == ToolType.LIPS_BEAUTY) {
             alphaSeekBar.setProgress(80);
-            tempAlpha =80;
+            tempAlpha = 80;
         }
         colorPickerSeekbar.init();
         txtColor.setText("Selected Color");
@@ -403,31 +393,32 @@ public class DesignActivity extends AppCompatActivity implements MainToolAdapter
             }
         });
 
-        Objects.requireNonNull(inCorrectBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                dialog.dismiss();
+        Objects.requireNonNull(inCorrectBtn).setOnClickListener(v -> dialog.dismiss());
+        Objects.requireNonNull(correctBtn).setOnClickListener(v -> {
+            if (toolType == ToolType.LIPS_BEAUTY) {
+                LipDraw draw = new LipDraw();
+                newTempBitmap = draw.drawFace(newTempBitmap, mainFaceList.get(0), tempColor, tempAlpha);
+                bitmapList.add(newTempBitmap);
+            } else if (toolType == ToolType.FACE_GLOW) {
+                FaceGlow glow = new FaceGlow();
+                newTempBitmap = glow.drawFace(newTempBitmap, mainFaceList.get(0), tempColor, tempAlpha);
+                bitmapList.add(newTempBitmap);
             }
-        });
-        Objects.requireNonNull(correctBtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                switch (toolType) {
-                    case LIPS_BEAUTY:
-                        LipDraw draw = new LipDraw();
-                        newTempBitmap = draw.drawFace(newTempBitmap, mainFaceList.get(0), tempColor, tempAlpha);
-                        bitmapList.add(newTempBitmap);
-                        break;
-                    case FACE_GLOW:
-                        FaceGlow glow = new FaceGlow();
-                        newTempBitmap = glow.drawFace(newTempBitmap, mainFaceList.get(0), tempColor, tempAlpha);
-                        bitmapList.add(newTempBitmap);
-                        break;
-                }
-                mainImageView.setImageDrawable(new BitmapDrawable(getResources(), newTempBitmap));
-                dialog.dismiss();
-            }
+            mainImageView.setImageDrawable(new BitmapDrawable(getResources(), newTempBitmap));
+            dialog.dismiss();
         });
         dialog.show();
     }
+
+    private void showDiscardImageConfirmationDialog(Runnable onConfirm) {
+        new AlertDialog.Builder(this)
+                .setTitle("Discard Current Image?")
+                .setMessage("Are you sure you want to discard the current image?")
+                .setPositiveButton("Yes", (dialog, which) -> {
+                    if (onConfirm != null) onConfirm.run();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
 }

@@ -4,7 +4,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorWhite"
-    tools:context=".Activities.ImagePreviewActivity">
+    tools:context=".activities.ImagePreviewActivity">
 
     <com.ad.zoomimageview.ZoomImageView
         android:id="@+id/preview_imageview"
@@ -22,21 +22,21 @@
         android:padding="10dp">
 
         <ImageView
-            android:onClick="onClose"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentStart="true"
             android:layout_centerInParent="true"
             android:layout_marginStart="50dp"
+            android:onClick="onClose"
             android:src="@drawable/ic_incorrect" />
 
         <ImageView
-            android:onClick="onCorrect"
             android:layout_width="50dp"
             android:layout_height="50dp"
             android:layout_alignParentEnd="true"
             android:layout_centerInParent="true"
             android:layout_marginEnd="50dp"
+            android:onClick="onCorrect"
             android:src="@drawable/ic_correct" />
     </RelativeLayout>
 </RelativeLayout>
