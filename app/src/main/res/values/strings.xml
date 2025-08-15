@@ -12,4 +12,5 @@
     <string name="camera">Open Camera</string>
     <string name="settings">Setting</string>
     <string name="help_feedback"><![CDATA[Help & Feedback]]></string>
+    <string name="scan_button">scan button</string>
 </resources>

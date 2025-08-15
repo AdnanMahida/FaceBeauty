@@ -2,7 +2,6 @@ package com.ad.facebeauty.activities;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
@@ -11,10 +10,10 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.ad.facebeauty.R;
+import com.ad.facebeauty.utills.ImageUtils;
 import com.ad.zoomimageview.ZoomImageView;
 
 import java.io.File;
-import java.io.InputStream;
 import java.util.Objects;
 
 public class ImagePreviewActivity extends AppCompatActivity {
@@ -33,24 +32,23 @@ public class ImagePreviewActivity extends AppCompatActivity {
         try {
             Intent intent = getIntent();
             imageUri = Uri.fromFile(new File(Objects.requireNonNull(intent.getStringExtra("imageUrl"))));
-            final InputStream stream = getContentResolver().openInputStream(imageUri);
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inMutable = true;
-            Bitmap bitmap = BitmapFactory.decodeStream(stream, null, options);
-            imageView.setImageBitmap(bitmap);
+            if (imageUri == null) {
+                throw new IllegalArgumentException("Image path is null");
+            }
+            Bitmap rotatedBitmap = ImageUtils.getCorrectlyOrientedBitmap(this, imageUri);
+            imageView.setImageBitmap(rotatedBitmap);
+
         } catch (Exception e) {
             e.printStackTrace();
+            Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
         }
     }
+
 
     public void onClose(View view) {
         File fDelete = new File(Objects.requireNonNull(imageUri.getPath()));
         if (fDelete.exists()) {
-            if (fDelete.delete()) {
-                finish();
-            } else {
-                finish();
-            }
+            finish();
         }
 
     }

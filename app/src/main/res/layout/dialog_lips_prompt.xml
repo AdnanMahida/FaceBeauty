@@ -18,7 +18,7 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <com.ad.facebeauty.Utills.ColorPickerSeekbar
+    <com.ad.facebeauty.utills.ColorPickerSeekbar
         android:id="@+id/lips_dialog_seekbar_color"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />

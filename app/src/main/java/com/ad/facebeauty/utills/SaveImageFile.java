@@ -1,12 +1,9 @@
 package com.ad.facebeauty.utills;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.util.Log;
 import android.widget.RelativeLayout;
@@ -20,7 +17,7 @@ import java.util.Random;
 public class SaveImageFile {
     private static final String DCIM = "/DCIM/";
     private static final String CAPTURE = "/capture";
-    private Context context;
+    private final Context context;
     private String fullPath;
 
     public SaveImageFile(Context context) {
@@ -80,7 +77,7 @@ public class SaveImageFile {
             * */
 
         } catch (Exception e) {
-            Log.d("EXEX",e.getMessage());
+            Log.d("EXEX", e.getMessage());
             Snackbar.make(rootLayout, "Can't Save Image" + fullPath, Snackbar.LENGTH_LONG)
                     .setAction("Action", null).show();
         }
