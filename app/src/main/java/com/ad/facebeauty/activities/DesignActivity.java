@@ -238,28 +238,21 @@ public class DesignActivity extends AppCompatActivity implements MainToolAdapter
     }
 
     private void onRedoPress() {
-        try {
-            if (!(bitmapList.size() >= 0)) {
-                Toast.makeText(this, "No Changes detected", Toast.LENGTH_SHORT).show();
-            } else {
-                newTempBitmap = bitmapList.get(bitmapList.indexOf(newTempBitmap) + 1);
-            }
+        int currentIndex = bitmapList.indexOf(newTempBitmap);
+        if (currentIndex >= 0 && currentIndex < bitmapList.size() - 1) {
+            newTempBitmap = bitmapList.get(currentIndex + 1);
             mainImageView.setImageDrawable(new BitmapDrawable(getResources(), newTempBitmap));
-        } catch (Exception e) {
+        } else {
             Toast.makeText(this, "No Changes detected", Toast.LENGTH_SHORT).show();
         }
     }
 
     private void onUndoPress() {
-        try {
-            if (!(bitmapList.size() > 1)) {
-                Toast.makeText(this, "No Changes detected", Toast.LENGTH_SHORT).show();
-                newTempBitmap = bitmapList.get(0);
-            } else {
-                newTempBitmap = bitmapList.get(bitmapList.indexOf(newTempBitmap) - 1);
-            }
+        int currentIndex = bitmapList.indexOf(newTempBitmap);
+        if (currentIndex > 0) {
+            newTempBitmap = bitmapList.get(currentIndex - 1);
             mainImageView.setImageDrawable(new BitmapDrawable(getResources(), newTempBitmap));
-        } catch (Exception e) {
+        } else {
             Toast.makeText(this, "No Changes detected", Toast.LENGTH_SHORT).show();
         }
     }
