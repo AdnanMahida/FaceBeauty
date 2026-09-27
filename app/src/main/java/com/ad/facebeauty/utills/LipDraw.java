@@ -34,10 +34,12 @@ public class LipDraw {
         float blur_radius = 5;
 
         Bitmap mask = createMask(lipPath, color, blur_radius, position);
-
-        Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
-        canvas.drawBitmap(mask, position.x, position.y, paint);
+        if (mask != null) {
+            Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
+            canvas.drawBitmap(mask, position.x, position.y, paint);
+            mask.recycle();
+        }
     }
 
     private static Bitmap createMask(final Path path, int color, float blur_radius, PointF position) {

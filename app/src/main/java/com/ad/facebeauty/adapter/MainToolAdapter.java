@@ -59,7 +59,10 @@ public class MainToolAdapter extends RecyclerView.Adapter<MainToolAdapter.ViewHo
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    toolItemSelected.OnToolItemSelected(toolList.get(getAdapterPosition()).mToolType);
+                    int position = getAdapterPosition();
+                    if (position != RecyclerView.NO_POSITION) {
+                        toolItemSelected.OnToolItemSelected(toolList.get(position).mToolType);
+                    }
                 }
             });
         }

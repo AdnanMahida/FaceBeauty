@@ -46,17 +46,15 @@ public class ImagePreviewActivity extends AppCompatActivity {
 
 
     public void onClose(View view) {
-        File fDelete = new File(Objects.requireNonNull(imageUri.getPath()));
-        if (fDelete.exists()) {
-            finish();
-        }
-
+        finish();
     }
 
     public void onCorrect(View view) {
-        Intent intent = new Intent(ImagePreviewActivity.this, DesignActivity.class);
-        intent.putExtra("imageUri", imageUri.toString());
-        startActivity(intent);
-        finish();
+        if (imageUri != null) {
+            Intent intent = new Intent(ImagePreviewActivity.this, DesignActivity.class);
+            intent.putExtra("imageUri", imageUri.toString());
+            startActivity(intent);
+            finish();
+        }
     }
 }
